@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "gps.h"
 #include "color.h"
+#include "accelerometer.h"
 
 // Definition des Buttons
 InterruptIn user_button(PB_2);
@@ -21,35 +22,33 @@ void change_mode() {
 }
 
 int main() {
-
     // Button-Interrupt konfigurieren (bei fallender Flanke)
     user_button.fall(&change_mode);
-    
-    // GPS-Objekt erstellen
-    GPS gps(PA_9, PA_10, PA_12);
 
-    // GPS initialisieren
-    gps.initialize();
+    // GPS-Objekt erstellen
+    //GPS gps(PA_9, PA_10, PA_12);
+    //gps.initialize();
 
     // Farbsensor-Objekt erstellen
     ColorSensor colorSensor(PB_7, PB_6); // I2C pins
     colorSensor.init(); // Initialize the color sensor
 
+    // Accelerometer-Objekt erstellen
+    Accelerometer accel(PB_9, PB_8);
+    accel.initialize();
+    printf("Accelerometer WhoAmI: %d\n", accel.getWhoAmI());
+
     // Separater Thread für die GPS-Datenverarbeitung
-    Thread gpsThread;
-    gpsThread.start(callback(&gps, &GPS::readAndProcessGPSData));
-
-    // Thread für die Farbsensorverarbeitung starten
-    Thread colorThread;
-    colorThread.start(callback(&colorSensor, &ColorSensor::run));
-
-    
+    //Thread gpsThread;
+    //gpsThread.start(callback(&gps, &GPS::readAndProcessGPSData));
 
     while (true) {
-        // Hier könnten Aktionen basierend auf dem Modus ausgeführt werden
+        // Aktionen basierend auf dem Modus
         switch (current_mode) {
             case TestMode:
-                // Aktionen für Test Mode
+                colorSensor.run();
+                //printf("%s\n\n", gps.get_data());
+                printf("X: %.2f m/s^2 Y: %.2f m/s^2 Z: %.2f m/s^2\n", accel.getAccX(), accel.getAccY(), accel.getAccZ());
                 break;
             case NormalMode:
                 // Aktionen für Normal Mode
