@@ -2,9 +2,13 @@
 #include "gps.h"
 #include "color.h"
 #include "accelerometer.h"
+#include "temperatur.h"
 
 // Definition des Buttons
 InterruptIn user_button(PB_2);
+
+// Gemeinsame I2C-Instanz für alle Sensoren
+I2C i2c(PB_7, PB_6);  // Dieselben I2C-Pins für alle Sensoren
 
 // Definiere die verschiedenen Modi
 enum Mode {
@@ -16,7 +20,7 @@ enum Mode {
 // Initialer Modus ist TestMode
 Mode current_mode = TestMode;
 
-// Kurze Funktion, die den Modus wechselt
+// Funktion, um den Modus zu wechseln
 void change_mode() {
     current_mode = static_cast<Mode>((current_mode + 1) % 3);
 }
@@ -25,40 +29,46 @@ int main() {
     // Button-Interrupt konfigurieren (bei fallender Flanke)
     user_button.fall(&change_mode);
 
-    // GPS-Objekt erstellen
-    //GPS gps(PA_9, PA_10, PA_12);
-    //gps.initialize();
+    // Farbsensor-Objekt erstellen und I2C-Instanz übergeben
+    ColorSensor colorSensor(i2c);
+    colorSensor.init();
 
-    // Farbsensor-Objekt erstellen
-    ColorSensor colorSensor(PB_7, PB_6); // I2C pins
-    colorSensor.init(); // Initialize the color sensor
-
-    // Accelerometer-Objekt erstellen
-    Accelerometer accel(PB_9, PB_8);
+    // Beschleunigungssensor-Objekt erstellen und I2C-Instanz übergeben
+    Accelerometer accel(i2c);
     accel.initialize();
     printf("Accelerometer WhoAmI: %d\n", accel.getWhoAmI());
 
-    // Separater Thread für die GPS-Datenverarbeitung
-    //Thread gpsThread;
-    //gpsThread.start(callback(&gps, &GPS::readAndProcessGPSData));
+    // Temperatur- und Feuchtigkeitssensor-Objekt erstellen
+    TemperatureSensor tempSensor(i2c);
 
     while (true) {
-        // Aktionen basierend auf dem Modus
         switch (current_mode) {
-            case TestMode:
-                colorSensor.run();
-                //printf("%s\n\n", gps.get_data());
-                printf("X: %.2f m/s^2 Y: %.2f m/s^2 Z: %.2f m/s^2\n", accel.getAccX(), accel.getAccY(), accel.getAccZ());
+            case TestMode: {
+                // Farbsensor auslesen und Werte anzeigen
+                uint16_t clear, red, green, blue;
+                colorSensor.readColorData(clear, red, green, blue);
+                printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear, red, green, blue);
+
+                // Beschleunigungswerte auslesen und anzeigen
+                printf("X: %.2f m/s^2, Y: %.2f m/s^2, Z: %.2f m/s^2\n",
+                       accel.getAccX(), accel.getAccY(), accel.getAccZ());
+
+                // Temperatur und Luftfeuchtigkeit auslesen und anzeigen
+                float temperature = tempSensor.readTemperature();
+                float humidity = tempSensor.readHumidity();
+                printf("Temperature: %.2f°C, Humidity: %.2f%%\n", temperature, humidity);
                 break;
+            }
             case NormalMode:
                 // Aktionen für Normal Mode
+                printf("Normal Mode active.\n");
                 break;
             case AdvancedMode:
                 // Aktionen für Advanced Mode
+                printf("Advanced Mode active.\n");
                 break;
         }
 
-        // CPU entlasten
-        ThisThread::sleep_for(100ms);
+        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
     }
 }

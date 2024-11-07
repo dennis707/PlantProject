@@ -17,7 +17,7 @@
 
 class ColorSensor {
 private:
-    I2C i2c; // I2C object
+    I2C &i2c; // Referenz auf die gemeinsame I2C-Instanz
     DigitalOut ledPin; // Control the LED
     int redCount, greenCount, blueCount; // Color counters for last hour
     EventQueue queue;
@@ -26,11 +26,10 @@ private:
     void writeRegister(uint8_t reg, uint8_t value);
     uint16_t read16(uint8_t reg);
 public:
-    ColorSensor(PinName sda, PinName scl); // Constructor with I2C pins
+    ColorSensor(I2C &i2c_instance); // Konstruktor mit I2C-Referenz
     void init();
     void readColorData(uint16_t &clear, uint16_t &red, uint16_t &green, uint16_t &blue);
     void detectDominantColor(uint16_t red, uint16_t green, uint16_t blue);
     void calculateHourlyDominantColor();
     void run(); // Method to run the sensor processing in a thread
 };
-

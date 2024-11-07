@@ -1,7 +1,6 @@
 #include "mbed.h"
 #include <cstdint>
 
-// Define register addresses as macros
 #define MMA8451_I2C_ADDRESS (0x1d << 1)
 #define REG_WHO_AM_I        0x0D
 #define REG_CTRL_REG_1      0x2A
@@ -12,14 +11,14 @@
 
 class Accelerometer {
 private:
-    I2C i2c;
+    I2C &i2c; // Referenz auf die gemeinsame I2C-Instanz
 
     void readRegs(int addr, uint8_t *data, int len);
     void writeRegs(uint8_t *data, int len);
     int16_t getAccAxis(uint8_t addr);
 
 public:
-    Accelerometer(PinName sda, PinName scl);
+    Accelerometer(I2C &i2c_instance); // Konstruktor mit I2C-Referenz
     void initialize();
     uint8_t getWhoAmI();
     float getAccX();
