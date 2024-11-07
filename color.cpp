@@ -53,7 +53,7 @@ void ColorSensor::detectDominantColor(uint16_t red, uint16_t green, uint16_t blu
 void ColorSensor::run() {
     uint16_t clear, red, green, blue; // Variables to hold color data
 
-    while (true) {
+    //while (true) {
         // Read color data from the sensor
         readColorData(clear, red, green, blue);
         
@@ -65,5 +65,5 @@ void ColorSensor::run() {
 
         // Delay before reading again
         ThisThread::sleep_for(1000ms); // Wait for 1 second before the next reading
-    }
+    //}
 }
