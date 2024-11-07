@@ -60,7 +60,6 @@ void ColorSensor::run() {
         // Determine and log the dominant color
         detectDominantColor(red, green, blue);
 
-        printf("HelloTest");
         // Print the color values to the serial monitor
         printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear, red, green, blue);
 
