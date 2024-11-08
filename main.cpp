@@ -10,6 +10,22 @@ InterruptIn user_button(PB_2);
 // Gemeinsame I2C-Instanz für alle Sensoren
 I2C i2c(PB_7, PB_6);  // Dieselben I2C-Pins für alle Sensoren
 
+
+// GPS-Objekt erstellen (definiere die TX-, RX- und Enable-Pins entsprechend deiner Hardware)
+GPS gps(PA_9, PA_10, PA_12); // Beispiel-Pins, passe diese ggf. an deine Hardware an
+
+// Thread für GPS
+Thread gps_thread;
+
+// Funktion für das GPS-Thread (aufruft GPS-Lesefunktion in einer Endlosschleife)
+void gpsThreadFunction() {
+    //while (true) {
+        gps.readAndProcessGPSData();
+        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen GPS-Lesezyklen
+    //}
+}
+
+
 // Definiere die verschiedenen Modi
 enum Mode {
     TestMode = 0,
@@ -41,6 +57,11 @@ int main() {
     // Temperatur- und Feuchtigkeitssensor-Objekt erstellen
     TemperatureSensor tempSensor(i2c);
 
+    gps.initialize(); // GPS-Modul initialisieren
+
+    // Starte das GPS-Thread
+    gps_thread.start(gpsThreadFunction);
+
     while (true) {
         switch (current_mode) {
             case TestMode: {
@@ -57,6 +78,7 @@ int main() {
                 float temperature = tempSensor.readTemperature();
                 float humidity = tempSensor.readHumidity();
                 printf("Temperature: %.2f°C, Humidity: %.2f%%\n", temperature, humidity);
+                //gps.readAndProcessGPSData();
                 break;
             }
             case NormalMode:
