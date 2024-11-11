@@ -17,10 +17,28 @@ I2C i2c(PB_7, PB_6);  // Dieselben I2C-Pins für alle Sensoren
 // GPS-Objekt erstellen (definiere die TX-, RX- und Enable-Pins entsprechend deiner Hardware)
 GPS gps(PA_9, PA_10, PA_12); // Beispiel-Pins, passe diese ggf. an deine Hardware an
 
-// Thread für GPS
-Thread gps_thread;
-// Thread oil and Brightness
+
+// Thread oil and Brightness and GPS
 Thread sensor_thread;
+
+// Funktion für den kombinierten Sensor-Thread (GPS, Brightness und SoilSensor)
+void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSensor) {
+    while (true) {
+        // GPS-Daten auslesen und verarbeiten
+        gps->readAndProcessGPSData();
+        
+        // Helligkeit messen und ausgeben
+        brightness->measure_brightness();
+        printf("Brightness: %.2f\n", brightness->get_brightness());
+
+        // Bodenfeuchtigkeit messen und ausgeben
+        float moisture = soilSensor->readMoisture();
+        printf("Soil Moisture: %.2f%%\n", moisture);
+
+        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
+    }
+}
+
 
 // Funktion für das GPS-Thread (aufruft GPS-Lesefunktion in einer Endlosschleife)
 void gpsThreadFunction() {
@@ -78,17 +96,13 @@ int main() {
 
     gps.initialize(); // GPS-Modul initialisieren
 
-    // Starte das GPS-Thread
-    gps_thread.start(gpsThreadFunction);
-
     // Brightness- und SoilSensor-Objekte erstellen
     Brightness brightness;
     SoilSensor soilSensor;
     RGB rgb;
 
-     // Starte den kombinierten Sensor-Thread mit einer Lambda-Funktion
-    sensor_thread.start([&]() {
-        sensorThreadFunction(&brightness, &soilSensor);
+      sensor_thread.start([&]() {
+        sensorThreadFunction(&gps, &brightness, &soilSensor);
     });
 
     while (true) {

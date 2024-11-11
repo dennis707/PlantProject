@@ -7,9 +7,13 @@
 class TemperatureSensor {
 private:
     I2C &i2c; // Referenz auf die I2C-Instanz
+    float temperature, humidity;
 
 public:
     TemperatureSensor(I2C &i2c_instance);  // Konstruktor mit I2C-Referenz
     float readHumidity();
     float readTemperature();
+
+    float getTemp(){return temperature;}
+    float getHumid(){return humidity;}
 };

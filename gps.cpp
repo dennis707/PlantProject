@@ -69,15 +69,15 @@ void GPS::parseData(char* nmea_sentence) {
 // Methode, um GPS-Daten zu lesen und zu verarbeiten
 void GPS::readAndProcessGPSData() {
     char buffer[256];
-    while (true) {
+    //while (true) {
         if (gpsSerial.readable()) {
             int bytesRead = gpsSerial.read(buffer, sizeof(buffer));
             if (bytesRead > 0) {
                 buffer[bytesRead] = '\0';
                 parseData(buffer); // Verarbeitet den empfangenen GPS-Datenpuffer
             }
-        }
-        ThisThread::sleep_for(2000ms); // Kleiner Schlaf, um die CPU zu entlasten
+        //}
+        //ThisThread::sleep_for(2000ms); // Kleiner Schlaf, um die CPU zu entlasten
     }
 }
 

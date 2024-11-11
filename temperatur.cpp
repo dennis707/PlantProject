@@ -13,7 +13,7 @@ float TemperatureSensor::readHumidity() {
     i2c.read(SI7021_ADDRESS, data, 2); // 2 Bytes für die Luftfeuchtigkeit lesen
 
     int humidity_raw = (data[0] << 8) | data[1];
-    float humidity = ((125.0 * humidity_raw) / 65536) - 6.0; // Umwandlung in %
+    humidity = ((125.0 * humidity_raw) / 65536) - 6.0; // Umwandlung in %
 
     return humidity;
 }
@@ -28,7 +28,7 @@ float TemperatureSensor::readTemperature() {
     i2c.read(SI7021_ADDRESS, data, 2); // 2 Bytes für die Temperatur lesen
 
     int temperature_raw = (data[0] << 8) | data[1];
-    float temperature = ((175.72 * temperature_raw) / 65536) - 46.85; // Umwandlung in °C
+    temperature = ((175.72 * temperature_raw) / 65536) - 46.85; // Umwandlung in °C
     
     return temperature;
 }
