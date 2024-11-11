@@ -7,7 +7,7 @@ Brightness::Brightness() : brightness_val(0){
     // Initialize brightness value and mode (e.g., Normal mode by default)
 }
 
-void Brightness::measure_brightness() 
+float Brightness::measure_brightness() 
 {
     //while (true) 
     //{
@@ -15,6 +15,7 @@ void Brightness::measure_brightness()
         brightness_val = brightness_sensor.read();  // Read brightness (0.0 - 1.0)
             
     //}
+    return brightness_val;
 }
 
 

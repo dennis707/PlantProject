@@ -27,7 +27,7 @@ Thread i2c_thread(osPriorityNormal, 1024);
 volatile uint16_t clear_val, red_val, green_val, blue_val;
 volatile float acc_x, acc_y, acc_z;
 volatile float temperature_val, humidity_val;
-volatile float soil;
+volatile float soil, brightness_val;
 
 // Funktion für den kombinierten Sensor-Thread (GPS, Brightness und SoilSensor)
 void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSensor) {
@@ -36,7 +36,8 @@ void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSens
         gps->readAndProcessGPSData();
         
         // Helligkeit messen und ausgeben
-        brightness->measure_brightness();
+        brightness_val = brightness->measure_brightness();
+
         //printf("Brightness: %.2f\n", brightness->get_brightness());
 
         // Bodenfeuchtigkeit messen und ausgeben
@@ -131,7 +132,7 @@ int main() {
         switch (current_mode) {
             case TestMode:
                 // Ausgeben der zuletzt ausgelesenen Werte der I2C-Sensoren
-                printf("Brightness: %.2f\n", brightness.get_brightness());
+                printf("Brightness: %.2f\n", brightness_val);
                 printf("Soil Moisture: %.2f%%\n", soil);
                 printf("GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s\n",
        gps.getNumSatellites(), gps.getLatitude(), gps.getParallel(), gps.getLongitude(), gps.getMeridian(), gps.getAltitude(), gps.getMeasurement(), gps.getGPSTime());
