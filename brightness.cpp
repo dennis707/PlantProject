@@ -1,6 +1,6 @@
 #include "brightness.h"
 
-AnalogIn brightness_sensor(A0);
+AnalogIn brightness_sensor(A2);
 
 // Constructor definition
 Brightness::Brightness() : brightness_val(0){

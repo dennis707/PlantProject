@@ -19,12 +19,12 @@ void RGB::set_green()
     blue_led = 1;
 }
 
-void RGB::set_yellow()
-{
-    red_led = 0;   // Yellow (Red + Green, inverted)
-    green_led = 0;
-    blue_led = 1;
-}
+//void RGB::set_yellow()
+//{
+//    red_led = 0;   // Yellow (Red + Green, inverted)
+//    green_led = 0;
+//    blue_led = 1;
+//}
 
 void RGB::turn_off_led()
 {

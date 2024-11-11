@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "color.h"
-
+#include "rgb.h"
+RGB rgb;
 // Konstruktor zur Initialisierung der I2C-Referenz und LED-Pin
 ColorSensor::ColorSensor(I2C &i2c_instance) : i2c(i2c_instance), ledPin(PA_4), redCount(0), greenCount(0), blueCount(0) {
     // Optional: Weitere Initialisierungen
@@ -58,4 +59,35 @@ void ColorSensor::run() {
 
     printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear, red, green, blue);
     ThisThread::sleep_for(100ms);
+}
+
+// Funktion, die den höchsten Farbwert ermittelt und die Farbe ausgibt
+void ColorSensor::getMaxColor(uint16_t red, uint16_t green, uint16_t blue, char &maxColor, uint16_t &maxValue) {
+    // Initialisiere die Werte
+    maxValue = red;
+    maxColor = 'R'; // Start mit 'R' für Rot
+
+    // Vergleiche mit Grün
+    if (green > maxValue) {
+        maxValue = green;
+        maxColor = 'G'; // Grün ist der höchste Wert
+    }
+
+    // Vergleiche mit Blau
+    if (blue > maxValue) {
+        maxValue = blue;
+        maxColor = 'B'; // Blau ist der höchste Wert
+    }
+
+    // Gebe den Namen der höchsten Farbe aus
+    if (maxColor == 'R') {
+        //printf("Rot hat den höchsten Wert: %d\n", maxValue);
+        rgb.set_red();
+    } else if (maxColor == 'G') {
+        //printf("Grün hat den höchsten Wert: %d\n", maxValue);
+        rgb.set_green();
+    } else if (maxColor == 'B') {
+        //printf("Blau hat den höchsten Wert: %d\n", maxValue);
+        rgb.set_blue();
+    }
 }
