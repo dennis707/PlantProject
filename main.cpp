@@ -98,7 +98,7 @@ int main() {
                 uint16_t clear, red, green, blue;
                 colorSensor.readColorData(clear, red, green, blue);
                 printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear, red, green, blue);
-                if(colorSensor.)
+                
                 // Beschleunigungswerte auslesen und anzeigen
                 printf("X: %.2f m/s^2, Y: %.2f m/s^2, Z: %.2f m/s^2\n",
                        accel.getAccX(), accel.getAccY(), accel.getAccZ());
