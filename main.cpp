@@ -3,6 +3,9 @@
 #include "color.h"
 #include "accelerometer.h"
 #include "temperatur.h"
+#include "oilSensor.h"
+#include "brightness.h"
+#include "rgb.h"
 
 // Definition des Buttons
 InterruptIn user_button(PB_2);
@@ -16,21 +19,37 @@ GPS gps(PA_9, PA_10, PA_12); // Beispiel-Pins, passe diese ggf. an deine Hardwar
 
 // Thread für GPS
 Thread gps_thread;
+// Thread oil and Brightness
+Thread sensor_thread;
 
 // Funktion für das GPS-Thread (aufruft GPS-Lesefunktion in einer Endlosschleife)
 void gpsThreadFunction() {
     //while (true) {
         gps.readAndProcessGPSData();
-        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen GPS-Lesezyklen
+        //ThisThread::sleep_for(2000ms);  // Wartezeit zwischen GPS-Lesezyklen
     //}
+}
+
+// Funktion für den kombinierten Brightness- und Soil-Sensor-Thread
+void sensorThreadFunction(Brightness* brightness, SoilSensor* soilSensor) {
+    while (true) {
+        // Helligkeit messen und ausgeben
+        brightness->measure_brightness();
+        printf("Brightness: %.2f\n", brightness->get_brightness());
+
+        // Bodenfeuchtigkeit messen und ausgeben
+        float moisture = soilSensor->readMoisture();
+        printf("Soil Moisture: %.2f%%\n", moisture);
+
+        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
+    }
 }
 
 
 // Definiere die verschiedenen Modi
 enum Mode {
     TestMode = 0,
-    NormalMode,
-    AdvancedMode
+    NormalMode
 };
 
 // Initialer Modus ist TestMode
@@ -62,6 +81,16 @@ int main() {
     // Starte das GPS-Thread
     gps_thread.start(gpsThreadFunction);
 
+    // Brightness- und SoilSensor-Objekte erstellen
+    Brightness brightness;
+    SoilSensor soilSensor;
+    RGB rgb;
+
+     // Starte den kombinierten Sensor-Thread mit einer Lambda-Funktion
+    sensor_thread.start([&]() {
+        sensorThreadFunction(&brightness, &soilSensor);
+    });
+
     while (true) {
         switch (current_mode) {
             case TestMode: {
@@ -69,7 +98,7 @@ int main() {
                 uint16_t clear, red, green, blue;
                 colorSensor.readColorData(clear, red, green, blue);
                 printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear, red, green, blue);
-
+                if(colorSensor.)
                 // Beschleunigungswerte auslesen und anzeigen
                 printf("X: %.2f m/s^2, Y: %.2f m/s^2, Z: %.2f m/s^2\n",
                        accel.getAccX(), accel.getAccY(), accel.getAccZ());
@@ -78,16 +107,11 @@ int main() {
                 float temperature = tempSensor.readTemperature();
                 float humidity = tempSensor.readHumidity();
                 printf("Temperature: %.2f°C, Humidity: %.2f%%\n", temperature, humidity);
-                //gps.readAndProcessGPSData();
                 break;
             }
             case NormalMode:
                 // Aktionen für Normal Mode
                 printf("Normal Mode active.\n");
-                break;
-            case AdvancedMode:
-                // Aktionen für Advanced Mode
-                printf("Advanced Mode active.\n");
                 break;
         }
 

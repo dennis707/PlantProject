@@ -32,4 +32,7 @@ public:
     void detectDominantColor(uint16_t red, uint16_t green, uint16_t blue);
     void calculateHourlyDominantColor();
     void run(); // Method to run the sensor processing in a thread
+    int getredcounter() {return redCount;}
+    int getgreencounter() {return greenCount;}
+    int getbluecounter() {return blueCount;}
 };

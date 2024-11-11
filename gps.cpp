@@ -57,9 +57,12 @@ void GPS::parseData(char* nmea_sentence) {
             token = strtok(NULL, ",");
             fieldIndex++;
         }
-        sprintf(gps_data, "GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s",
-                num_satellites, latitude, parallel, longitude, meridian, altitude, measurement, gps_time);
-        printf("%s\n\n", gps_data);
+        //sprintf(gps_data, "GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s",
+        //        num_satellites, latitude, parallel, longitude, meridian, altitude, measurement, gps_time);
+        //printf("%s\n\n", gps_data);
+        printf("GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s\n\n",
+       num_satellites, latitude, parallel, longitude, meridian, altitude, measurement, gps_time);
+
     }
 }
 

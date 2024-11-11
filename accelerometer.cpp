@@ -27,7 +27,8 @@ float Accelerometer::getAccZ() {
 
 void Accelerometer::readRegs(int addr, uint8_t *data, int len) {
     char t[1] = {static_cast<char>(addr)};
-    i2c.write(MMA8451_I2C_ADDRESS, t, 1, true);
+    i2c.write(MMA8451_I2C_ADDRESS, t, 1, true); // Zahl 1 gibt die Länge der zu schreibenden Daten an, also die Anzahl der Bytes
+    //Das true-Argument steht für einen "repeated start" auf dem I2C-Bus. Es sorgt dafür, dass nach dem Senden dieses Bytes kein "STOP"-Signal gesendet wird.
     i2c.read(MMA8451_I2C_ADDRESS, reinterpret_cast<char *>(data), len);
 }
 
@@ -40,7 +41,7 @@ int16_t Accelerometer::getAccAxis(uint8_t addr) {
     uint8_t res[2];
     readRegs(addr, res, 2);
 
-    acc = (res[0] << 6) | (res[1] >> 2);
+    acc = (res[0] << 6) | (res[1] >> 2); // um ein 14-Bit-Ergebnis (acc) zu erhalten.
     if (acc > UINT14_MAX / 2) {
         acc -= UINT14_MAX;
     }
