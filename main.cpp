@@ -13,13 +13,19 @@ InterruptIn user_button(PB_2);
 // Gemeinsame I2C-Instanz für alle Sensoren
 I2C i2c(PB_7, PB_6);  // Dieselben I2C-Pins für alle Sensoren
 
-
 // GPS-Objekt erstellen (definiere die TX-, RX- und Enable-Pins entsprechend deiner Hardware)
 GPS gps(PA_9, PA_10, PA_12); // Beispiel-Pins, passe diese ggf. an deine Hardware an
 
+// Thread für GPS, Brightness und SoilSensor
+Thread sensor_thread(osPriorityNormal, 1024); // stacksize 1 kilo 1024
 
-// Thread oil and Brightness and GPS
-Thread sensor_thread;
+// Neuer Thread für I2C-Sensoren
+Thread i2c_thread(osPriorityNormal, 1024);
+
+// Gemeinsame Variablen für die Sensorwerte
+volatile uint16_t clear_val, red_val, green_val, blue_val;
+volatile float acc_x, acc_y, acc_z;
+volatile float temperature_val, humidity_val;
 
 // Funktion für den kombinierten Sensor-Thread (GPS, Brightness und SoilSensor)
 void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSensor) {
@@ -29,40 +35,42 @@ void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSens
         
         // Helligkeit messen und ausgeben
         brightness->measure_brightness();
-        printf("Brightness: %.2f\n", brightness->get_brightness());
+        //printf("Brightness: %.2f\n", brightness->get_brightness());
 
         // Bodenfeuchtigkeit messen und ausgeben
         float moisture = soilSensor->readMoisture();
-        printf("Soil Moisture: %.2f%%\n", moisture);
+        //printf("Soil Moisture: %.2f%%\n", moisture);
 
         ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
     }
 }
 
-
-// Funktion für das GPS-Thread (aufruft GPS-Lesefunktion in einer Endlosschleife)
-void gpsThreadFunction() {
-    //while (true) {
-        gps.readAndProcessGPSData();
-        //ThisThread::sleep_for(2000ms);  // Wartezeit zwischen GPS-Lesezyklen
-    //}
-}
-
-// Funktion für den kombinierten Brightness- und Soil-Sensor-Thread
-void sensorThreadFunction(Brightness* brightness, SoilSensor* soilSensor) {
+void i2cThreadFunction(ColorSensor* colorSensor, Accelerometer* accel, TemperatureSensor* tempSensor) {
     while (true) {
-        // Helligkeit messen und ausgeben
-        brightness->measure_brightness();
-        printf("Brightness: %.2f\n", brightness->get_brightness());
+        // Temporäre Variablen für Farbsensordaten ohne `volatile`
+        uint16_t temp_clear, temp_red, temp_green, temp_blue;
 
-        // Bodenfeuchtigkeit messen und ausgeben
-        float moisture = soilSensor->readMoisture();
-        printf("Soil Moisture: %.2f%%\n", moisture);
+        // Farbsensor auslesen und in temporäre Variablen speichern
+        colorSensor->readColorData(temp_clear, temp_red, temp_green, temp_blue);
 
-        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
+        // Werte in `volatile`-Variablen kopieren
+        clear_val = temp_clear;
+        red_val = temp_red;
+        green_val = temp_green;
+        blue_val = temp_blue;
+        
+        // Beschleunigungswerte auslesen
+        acc_x = accel->getAccX();
+        acc_y = accel->getAccY();
+        acc_z = accel->getAccZ();
+        
+        // Temperatur und Luftfeuchtigkeit auslesen
+        temperature_val = tempSensor->readTemperature();
+        humidity_val = tempSensor->readHumidity();
+
+        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den I2C-Messungen
     }
 }
-
 
 // Definiere die verschiedenen Modi
 enum Mode {
@@ -75,7 +83,7 @@ Mode current_mode = TestMode;
 
 // Funktion, um den Modus zu wechseln
 void change_mode() {
-    current_mode = static_cast<Mode>((current_mode + 1) % 3);
+    current_mode = static_cast<Mode>((current_mode + 1) % 2); // Nur 2 Modi: TestMode und NormalMode
 }
 
 int main() {
@@ -101,34 +109,36 @@ int main() {
     SoilSensor soilSensor;
     RGB rgb;
 
-      sensor_thread.start([&]() {
+    // Starte den kombinierten Sensor-Thread mit GPS, Brightness und SoilSensor
+    sensor_thread.start([&]() {
         sensorThreadFunction(&gps, &brightness, &soilSensor);
     });
 
+    // Starte den I2C-Sensor-Thread für Farbsensor, Beschleunigungssensor und Temperatur-/Feuchtigkeitssensor
+    i2c_thread.start([&]() {
+        i2cThreadFunction(&colorSensor, &accel, &tempSensor);
+    });
+
+    // Hauptschleife mit Moduswechsel und nur Ausgaben
     while (true) {
         switch (current_mode) {
-            case TestMode: {
-                // Farbsensor auslesen und Werte anzeigen
-                uint16_t clear, red, green, blue;
-                colorSensor.readColorData(clear, red, green, blue);
-                printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear, red, green, blue);
-                
-                // Beschleunigungswerte auslesen und anzeigen
-                printf("X: %.2f m/s^2, Y: %.2f m/s^2, Z: %.2f m/s^2\n",
-                       accel.getAccX(), accel.getAccY(), accel.getAccZ());
-
-                // Temperatur und Luftfeuchtigkeit auslesen und anzeigen
-                float temperature = tempSensor.readTemperature();
-                float humidity = tempSensor.readHumidity();
-                printf("Temperature: %.2f°C, Humidity: %.2f%%\n", temperature, humidity);
+            case TestMode:
+                // Ausgeben der zuletzt ausgelesenen Werte der I2C-Sensoren
+                printf("Brightness: %.2f\n", brightness.get_brightness());
+                printf("Soil Moisture: %.2f%%\n", soilSensor.getSensorValue());
+                printf("GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s\n",
+       gps.getNumSatellites(), gps.getLatitude(), gps.getParallel(), gps.getLongitude(), gps.getMeridian(), gps.getAltitude(), gps.getMeasurement(), gps.getGPSTime());
+                printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear_val, red_val, green_val, blue_val);
+                printf("X: %.2f m/s^2, Y: %.2f m/s^2, Z: %.2f m/s^2\n", acc_x, acc_y, acc_z);
+                printf("Temperature: %.2f°C, Humidity: %.2f%%\n", temperature_val, humidity_val);
                 break;
-            }
+                
             case NormalMode:
                 // Aktionen für Normal Mode
                 printf("Normal Mode active.\n");
                 break;
         }
 
-        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
+        ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Ausgaben
     }
 }

@@ -42,6 +42,8 @@ public:
     char getMeridian();
     float getAltitude();
     char* getGPSTime();
+    char getMeasurement();
+
     
     // Methode, um GPS-Daten einzulesen und zu verarbeiten (ohne Thread)
     void readAndProcessGPSData();

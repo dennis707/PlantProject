@@ -60,8 +60,9 @@ void GPS::parseData(char* nmea_sentence) {
         //sprintf(gps_data, "GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s",
         //        num_satellites, latitude, parallel, longitude, meridian, altitude, measurement, gps_time);
         //printf("%s\n\n", gps_data);
-        printf("GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s\n\n",
-       num_satellites, latitude, parallel, longitude, meridian, altitude, measurement, gps_time);
+        
+        //printf("GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s\n\n",
+       //num_satellites, latitude, parallel, longitude, meridian, altitude, measurement, gps_time);
 
     }
 }
@@ -89,3 +90,4 @@ float GPS::getLongitude()  { return longitude; }
 char GPS::getMeridian()  { return meridian; }
 float GPS::getAltitude()  { return altitude; }
 char* GPS::getGPSTime()  { return gps_time; }
+char GPS::getMeasurement() {return measurement;}
