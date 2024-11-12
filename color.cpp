@@ -91,3 +91,24 @@ void ColorSensor::getMaxColor(uint16_t red, uint16_t green, uint16_t blue, char 
         rgb.set_blue();
     }
 }
+
+int ColorSensor::get_max_counter()
+{
+    if (redCount > greenCount && redCount > blueCount) 
+    {   
+        // Sende die dominante Farbe an den Computer (oder verwende sie weiter)
+        printf("Dominant Color is red: %d\n", redCount); // z.B. 1=Rot, 2=Grün, 3=Blau
+        return redCount;
+    } 
+    else if (greenCount > redCount && greenCount > blueCount)
+    {
+        printf("Dominant Color is green: %d\n", greenCount); // z.B. 1=Rot, 2=Grün, 3=Blau
+        return greenCount; 
+    } 
+    else if (blueCount > redCount && blueCount > greenCount)
+    {
+        printf("Dominant Color is blue: %d\n", blueCount); // z.B. 1=Rot, 2=Grün, 3=Blau
+        return blueCount;
+    } 
+    return 1;
+}

@@ -34,4 +34,5 @@ public:
     void run(); // Method to run the sensor processing in a thread
 
     void getMaxColor(uint16_t red, uint16_t green, uint16_t blue, char &maxColor, uint16_t &maxValue);
+    int get_max_counter();
 };

@@ -1,6 +1,9 @@
 #include "accelerometer.h"
 
-Accelerometer::Accelerometer(I2C &i2c_instance) : i2c(i2c_instance) {}
+Accelerometer::Accelerometer(I2C &i2c_instance) : i2c(i2c_instance) 
+{
+    
+}
 
 void Accelerometer::initialize() {
     uint8_t data[2] = {REG_CTRL_REG_1, 0x01};
@@ -46,4 +49,37 @@ int16_t Accelerometer::getAccAxis(uint8_t addr) {
         acc -= UINT14_MAX;
     }
     return acc;
+}
+
+void Accelerometer::update_values(float new_x, float new_y, float new_z)
+{
+    // Maximalwert aktualisieren x
+    if (new_x > max_value_x) {
+        max_value_x = new_x;
+    }
+
+    // Minimalwert aktualisieren 
+    if (new_x < min_value_x) {
+        min_value_x = new_x;
+    }
+
+    // Maximalwert aktualisieren y
+    if (new_y > max_value_y) {
+        max_value_y = new_y;
+    }
+
+    // Minimalwert aktualisieren
+    if (new_y < min_value_y) {
+        min_value_y = new_y;
+    }
+
+    // Maximalwert aktualisieren z
+    if (new_z > max_value_z) {
+        max_value_z = new_z;
+    }
+
+    // Minimalwert aktualisieren
+    if (new_z < min_value_z) {
+        min_value_z = new_z;
+    }
 }

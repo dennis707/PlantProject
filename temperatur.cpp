@@ -1,7 +1,17 @@
 #include "temperatur.h"
 
 // Konstruktor: speichert die I2C-Referenz
-TemperatureSensor::TemperatureSensor(I2C &i2c_instance) : i2c(i2c_instance) {}
+TemperatureSensor::TemperatureSensor(I2C &i2c_instance) : i2c(i2c_instance) 
+{
+    max_value = -10;     
+    min_value = 50;       
+    mean_value = 0;      
+
+    max_value_humid = 25;     
+    min_value_humid = 75;       
+    mean_value_humid = 0;   
+    measurement_count = 0; 
+}
 
 // Methode zur Messung der Luftfeuchtigkeit
 float TemperatureSensor::readHumidity() {                  
@@ -31,4 +41,52 @@ float TemperatureSensor::readTemperature() {
     temperature = ((175.72 * temperature_raw) / 65536) - 46.85; // Umwandlung in °C
     
     return temperature;
+}
+
+
+// Funktion zum Aktualisieren von max, min und mean
+void TemperatureSensor::update_values(float new_val)
+{
+    // Maximalwert aktualisieren
+    if (new_val > max_value) {
+        max_value = new_val;
+    }
+
+    // Minimalwert aktualisieren
+    if (new_val < min_value) {
+        min_value = new_val;
+    }
+
+    // Mittelwert berechnen
+    mean_value = ((mean_value * measurement_count) + new_val) / (measurement_count + 1);
+    measurement_count++;  // Anzahl der Messungen erhöhen
+}
+
+void TemperatureSensor::update_values_humid(float new_val)
+{
+    // Maximalwert aktualisieren
+    if (new_val > max_value_humid) {
+        max_value_humid = new_val;
+    }
+
+    // Minimalwert aktualisieren
+    if (new_val < min_value_humid) {
+        min_value_humid = new_val;
+    }
+
+    // Mittelwert berechnen
+    mean_value_humid = ((mean_value_humid * measurement_count) + new_val) / (measurement_count + 1);
+    measurement_count++;  // Anzahl der Messungen erhöhen
+}
+
+void TemperatureSensor::clear_values()
+{
+    max_value = -10;     
+    min_value = 50;       
+    mean_value = 0;      
+
+    max_value_humid = 25;     
+    min_value_humid = 75;       
+    mean_value_humid = 0;   
+    measurement_count = 0; 
 }
