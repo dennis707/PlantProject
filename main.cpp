@@ -9,7 +9,9 @@
 
 // Definition des Buttons
 InterruptIn user_button(PB_2);
-//RGB rgb;
+
+// Definition der LED1 für das LoRaWAN-Board
+DigitalOut led1(LED1);
 
 // Gemeinsame I2C-Instanz für alle Sensoren
 I2C i2c(PB_7, PB_6);  // Dieselben I2C-Pins für alle Sensoren
@@ -38,12 +40,9 @@ void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSens
         // Helligkeit messen und ausgeben
         brightness_val = brightness->measure_brightness();
 
-        //printf("Brightness: %.2f\n", brightness->get_brightness());
-
         // Bodenfeuchtigkeit messen und ausgeben
         float moisture = soilSensor->readMoisture();
         soil = moisture;
-        //printf("Soil Moisture: %.2f%%\n", moisture);
 
         ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
     }
@@ -92,7 +91,7 @@ Mode current_mode = TestMode;
 
 // Funktion, um den Modus zu wechseln
 void change_mode() {
-    current_mode = static_cast<Mode>((current_mode + 1) % 2); // Nur 2 Modi: TestMode und NormalMode
+    current_mode = (current_mode == TestMode) ? NormalMode : TestMode;
 }
 
 int main() {
@@ -131,6 +130,7 @@ int main() {
     while (true) {
         switch (current_mode) {
             case TestMode:
+                led1 = 1;  // LED1 einschalten
                 // Ausgeben der zuletzt ausgelesenen Werte der I2C-Sensoren
                 printf("Brightness: %.2f\n", brightness_val);
                 printf("Soil Moisture: %.2f%%\n", soil);
@@ -143,6 +143,7 @@ int main() {
                 
             case NormalMode:
                 // Aktionen für Normal Mode
+                led1 = 0;  // LED1 ausschalten
                 printf("Normal Mode active.\n");
                 break;
         }
