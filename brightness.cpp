@@ -3,7 +3,7 @@
 AnalogIn brightness_sensor(A2);
 
 // Constructor definition
-Brightness::Brightness() : brightness_val(0),max_value(0), min_value(100), mean_value(0), measurement_count(0){
+Brightness::Brightness(RGB &rgbinstance) : rgb(rgbinstance), brightness_val(0),max_value(0), min_value(100), mean_value(0), measurement_count(0){
     // Initialize brightness value and mode (e.g., Normal mode by default)
 }
 
@@ -42,4 +42,17 @@ void Brightness::clear_values()
     min_value = 100;       
     mean_value = 0;      
     measurement_count = 0; 
+}
+
+void Brightness::check_limit()
+{
+    if(brightness_val > upper_limit || brightness_val < lower_limit)
+    {
+        rgb.set_blue();
+    }
+    else 
+    {
+        rgb.turn_off_led();
+    }
+    
 }

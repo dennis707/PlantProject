@@ -6,7 +6,8 @@
 #include "oilSensor.h"
 #include "brightness.h"
 #include "rgb.h"
-#include <vector>
+
+RGB rgb;
 
 // Definition des Buttons
 InterruptIn user_button(PB_2);
@@ -122,7 +123,7 @@ int main() {
     user_button.fall(&change_mode);
 
     // Farbsensor-Objekt erstellen und I2C-Instanz übergeben
-    ColorSensor colorSensor(i2c);
+    ColorSensor colorSensor(i2c,rgb);
     colorSensor.init();
 
     // Beschleunigungssensor-Objekt erstellen und I2C-Instanz übergeben
@@ -131,13 +132,13 @@ int main() {
     printf("Accelerometer WhoAmI: %d\n", accel.getWhoAmI());
 
     // Temperatur- und Feuchtigkeitssensor-Objekt erstellen
-    TemperatureSensor tempSensor(i2c);
+    TemperatureSensor tempSensor(i2c, rgb);
 
     gps.initialize(); // GPS-Modul initialisieren
 
     // Brightness- und SoilSensor-Objekte erstellen
-    Brightness brightness;
-    SoilSensor soilSensor;
+    Brightness brightness(rgb);
+    SoilSensor soilSensor(rgb);
 
     // Starte den kombinierten Sensor-Thread mit GPS, Brightness und SoilSensor
     sensor_thread.start([&]() {
@@ -148,6 +149,7 @@ int main() {
     i2c_thread.start([&]() {
         i2cThreadFunction(&colorSensor, &accel, &tempSensor);
     });
+
 
     // Timer für die stündliche Berechnung
     Timer hourly_timer;
@@ -174,7 +176,7 @@ int main() {
                 
             case NormalMode:
                 // Aktionen für Normal Mode
-                
+                rgb.turn_off_led();
                 testmode = false;
                 led1 = 0;  // LED1 ausschalten
                 led2 = 1;
@@ -185,7 +187,13 @@ int main() {
                 tempSensor.update_values(temperature_val);  // Temperatur
                 tempSensor.update_values_humid(humidity_val);
                 accel.update_values(acc_x, acc_y, acc_z);
+                gps.convertToLocalTimeSpain();
 
+                brightness.check_limit();
+                soilSensor.check_limit();
+                tempSensor.check_limit();
+
+                
                 if (hourly_timer.elapsed_time() >= 60s) {  // Prüfe, ob eine Stunde vergangen ist
 
                     printf("Brightness - Max: %.2f, Min: %.2f, Mean: %.2f\n", brightness.get_max_value(), brightness.get_min_value(), brightness.get_mean_value());

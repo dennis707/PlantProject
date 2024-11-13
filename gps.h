@@ -47,5 +47,8 @@ public:
     
     // Methode, um GPS-Daten einzulesen und zu verarbeiten (ohne Thread)
     void readAndProcessGPSData();
+
+    int calculateSpainOffset();
+    void convertToLocalTimeSpain();
 };
 

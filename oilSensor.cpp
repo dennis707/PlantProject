@@ -1,7 +1,7 @@
 #include "oilSensor.h"
 AnalogIn _sensorPin(A0);
 
-SoilSensor::SoilSensor()
+SoilSensor::SoilSensor(RGB &rgbinstance) : rgb(rgbinstance)
 {
     max_value = 0;     
     min_value = 100;       
@@ -39,4 +39,17 @@ void SoilSensor::clear_values()
     min_value = 100;       
     mean_value = 0;      
     measurement_count = 0; 
+}
+
+void SoilSensor::check_limit()
+{
+    if(sens_val > upper_limit || sens_val < lower_limit)
+    {
+        rgb.set_green();
+    }
+    else 
+    {
+        rgb.turn_off_led();
+    }
+    
 }

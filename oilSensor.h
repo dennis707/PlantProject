@@ -1,7 +1,9 @@
 #include "mbed.h"
+#include "rgb.h"
 
 class SoilSensor {
 private:
+    RGB &rgb;
     float sens_val;
 
     float max_value;       
@@ -9,8 +11,11 @@ private:
     float mean_value;      
     int measurement_count; 
 
+    float upper_limit = 100;
+    float lower_limit = 0;
+
 public:
-    SoilSensor();
+    SoilSensor(RGB &rgbinstance);
     // Methode zum Lesen der Bodenfeuchtigkeit in Prozent
     float readMoisture();
     float getSensorValue() {return sens_val;}
@@ -22,5 +27,7 @@ public:
     float get_min_value() { return min_value; }
     float get_mean_value() { return mean_value; }
     void clear_values();
+
+    void check_limit();
 };
 

@@ -1,9 +1,8 @@
 #include "mbed.h"
 #include "color.h"
-#include "rgb.h"
-RGB rgb;
+
 // Konstruktor zur Initialisierung der I2C-Referenz und LED-Pin
-ColorSensor::ColorSensor(I2C &i2c_instance) : i2c(i2c_instance), ledPin(PA_4), redCount(0), greenCount(0), blueCount(0) {
+ColorSensor::ColorSensor(I2C &i2c_instance, RGB &rgbInstance) : i2c(i2c_instance), rgb(rgbInstance), ledPin(PA_4), redCount(0), greenCount(0), blueCount(0) {
     // Optional: Weitere Initialisierungen
 }
 

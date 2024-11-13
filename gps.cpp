@@ -91,3 +91,46 @@ char GPS::getMeridian()  { return meridian; }
 float GPS::getAltitude()  { return altitude; }
 char* GPS::getGPSTime()  { return gps_time; }
 char GPS::getMeasurement() {return measurement;}
+
+
+#include <ctime>
+
+// Funktion zur Bestimmung des Zeit-Offsets basierend auf Sommer-/Winterzeit in Spanien
+int GPS::calculateSpainOffset() {
+    // Aktuelles Datum und Monat abrufen
+    time_t now = time(NULL);
+    struct tm *currentTime = gmtime(&now);
+    int month = currentTime->tm_mon + 1; // Monate von 0-11, daher +1
+    int day = currentTime->tm_mday;
+
+    // Sommerzeit: von letztem Sonntag im März bis letztem Sonntag im Oktober
+    if ((month > 3 && month < 10) ||  // Zwischen April und September
+        (month == 3 && day >= 25) ||  // Letzte Märzwoche (circa ab dem 25.)
+        (month == 10 && day < 25)) {  // Vorletzte Oktoberwoche (bis ca. 24.)
+        return 2; // Sommerzeit (UTC+2)
+    } else {
+        return 1; // Winterzeit (UTC+1)
+    }
+}
+
+// Funktion zur Umrechnung der GPS-Zeit (UTC) in die lokale Zeit für Spanien
+void GPS::convertToLocalTimeSpain() {
+    int offset_hours = calculateSpainOffset();
+
+    // GPS-Zeit in Stunden, Minuten und Sekunden zerlegen
+    int hours, minutes, seconds;
+    sscanf(gps_time, "%2d:%2d:%2d", &hours, &minutes, &seconds);
+
+    // Offset anwenden
+    hours += offset_hours;
+
+    // Stunden auf 24-Stunden-Format anpassen
+    if (hours >= 24) {
+        hours -= 24; // Nächster Tag
+    } else if (hours < 0) {
+        hours += 24; // Vorheriger Tag
+    }
+
+    // Lokale Zeit in gps_time zurückspeichern
+    snprintf(gps_time, sizeof(gps_time), "%02d:%02d:%02d", hours, minutes, seconds);
+}

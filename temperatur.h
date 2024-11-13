@@ -1,4 +1,5 @@
 #include "mbed.h"
+#include "rgb.h"
 
 #define CMD_MEASURE_HUMIDITY 0xF5       // Measure humidity register
 #define CMD_MEASURE_TEMPERATURE 0xF3    // Measure temperature register
@@ -7,6 +8,7 @@
 class TemperatureSensor {
 private:
     I2C &i2c; // Referenz auf die I2C-Instanz
+    RGB &rgb;
     float temperature, humidity;
 
     float max_value;       // Der höchste Helligkeitswert
@@ -17,8 +19,13 @@ private:
     float mean_value_humid;      // Der Mittelwert der Helligkeit
     int measurement_count; // Zähler der Messungen (für Mittelwertberechnung)
 
+    float upper_limit_temp = 22;
+    float lower_limit_temp = -10;
+    float upper_limit_humid = 75;
+    float lower_limit_humid = 25;
+
 public:
-    TemperatureSensor(I2C &i2c_instance);  // Konstruktor mit I2C-Referenz
+    TemperatureSensor(I2C &i2c_instance, RGB &rgbinstance);  // Konstruktor mit I2C-Referenz
     float readHumidity();
     float readTemperature();
 
@@ -36,5 +43,7 @@ public:
     float get_min_value_humid() { return min_value_humid; }
     float get_mean_value_humid() { return mean_value_humid; }
     void clear_values();
+
+    void check_limit();
 
 };

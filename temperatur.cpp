@@ -1,7 +1,7 @@
 #include "temperatur.h"
 
 // Konstruktor: speichert die I2C-Referenz
-TemperatureSensor::TemperatureSensor(I2C &i2c_instance) : i2c(i2c_instance) 
+TemperatureSensor::TemperatureSensor(I2C &i2c_instance, RGB &rgbinstance) : i2c(i2c_instance), rgb(rgbinstance) 
 {
     max_value = -10;     
     min_value = 50;       
@@ -89,4 +89,26 @@ void TemperatureSensor::clear_values()
     min_value_humid = 75;       
     mean_value_humid = 0;   
     measurement_count = 0; 
+}
+
+void TemperatureSensor::check_limit()
+{
+    if(temperature > upper_limit_temp || temperature < lower_limit_temp)
+    {
+        rgb.set_tempColor();
+    }
+    else 
+    {
+        rgb.turn_off_led();
+    }
+
+    if(humidity > upper_limit_humid || humidity < lower_limit_humid)
+    {
+        rgb.set_humidColor();
+    }
+    else 
+    {
+        rgb.turn_off_led();
+    }
+    
 }

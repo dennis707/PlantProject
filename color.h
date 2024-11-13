@@ -1,4 +1,5 @@
 #include "mbed.h"
+#include "rgb.h"
 
 // TCS34725 Address
 #define TCS34725_ADDRESS 0x29 << 1 // Shifted left for 8-bit format (0x29 becomes 0x52)
@@ -18,6 +19,7 @@
 class ColorSensor {
 private:
     I2C &i2c; // Referenz auf die gemeinsame I2C-Instanz
+    RGB &rgb;
     DigitalOut ledPin; // Control the LED
     int redCount, greenCount, blueCount; // Color counters for last hour
     EventQueue queue;
@@ -26,7 +28,7 @@ private:
     void writeRegister(uint8_t reg, uint8_t value);
     uint16_t read16(uint8_t reg);
 public:
-    ColorSensor(I2C &i2c_instance); // Konstruktor mit I2C-Referenz
+    ColorSensor(I2C &i2c_instance, RGB& rgbInstance); // Konstruktor mit I2C-Referenz
     void init();
     void readColorData(uint16_t &clear, uint16_t &red, uint16_t &green, uint16_t &blue);
     void detectDominantColor(uint16_t red, uint16_t green, uint16_t blue);

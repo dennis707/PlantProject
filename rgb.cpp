@@ -39,3 +39,17 @@ void RGB::set_blue()
     green_led = 1;
     blue_led = 0;
 }
+
+void RGB::set_tempColor()
+{
+    red_led = 0;   
+    green_led = 1;
+    blue_led = 0;
+}
+
+void RGB::set_humidColor()
+{
+    red_led = 1;   
+    green_led = 0;
+    blue_led = 0;
+}
