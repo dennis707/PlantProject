@@ -18,7 +18,7 @@ float TemperatureSensor::readHumidity() {
     char cmd[1] = { CMD_MEASURE_HUMIDITY };
     char data[2] = { 0 };
     
-    i2c.write(SI7021_ADDRESS, cmd, 1); // Befehl zum Messen der Luftfeuchtigkeit senden
+    i2c.write(SI7021_ADDRESS, cmd, 1); // Befehl zum Messen der Luftfeuchtigkeit senden 1--> Anzahl der Bytes
     ThisThread::sleep_for(20ms);       // Warten auf die Messung
     i2c.read(SI7021_ADDRESS, data, 2); // 2 Bytes für die Luftfeuchtigkeit lesen
 

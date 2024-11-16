@@ -176,7 +176,7 @@ int main() {
                 
             case NormalMode:
                 // Aktionen für Normal Mode
-                rgb.turn_off_led();
+                //rgb.turn_off_led();
                 testmode = false;
                 led1 = 0;  // LED1 ausschalten
                 led2 = 1;

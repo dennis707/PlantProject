@@ -48,7 +48,7 @@ void Brightness::check_limit()
 {
     if(brightness_val > upper_limit || brightness_val < lower_limit)
     {
-        rgb.set_blue();
+        rgb.set_brightnessColor();
     }
     else 
     {

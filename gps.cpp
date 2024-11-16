@@ -4,6 +4,7 @@
 
 // Konstruktor, der GPS-Komponenten initialisiert
 GPS::GPS(PinName tx, PinName rx, PinName enablePin)
+
     : gpsSerial(tx, rx, 9600), pc_serial(USBTX, USBRX, 115200), gpsEnable(enablePin) {
     num_satellites = 0;
     latitude = 0.0;

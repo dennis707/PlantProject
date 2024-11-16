@@ -49,16 +49,6 @@ void ColorSensor::detectDominantColor(uint16_t red, uint16_t green, uint16_t blu
     }
 }
 
-// Funktion zur Ausführung der Sensorverarbeitung in einem Thread
-void ColorSensor::run() {
-    uint16_t clear, red, green, blue;
-
-    readColorData(clear, red, green, blue);
-    detectDominantColor(red, green, blue);
-
-    printf("Clear: %d, Red: %d, Green: %d, Blue: %d\n", clear, red, green, blue);
-    ThisThread::sleep_for(100ms);
-}
 
 // Funktion, die den höchsten Farbwert ermittelt und die Farbe ausgibt
 void ColorSensor::getMaxColor(uint16_t red, uint16_t green, uint16_t blue, char &maxColor, uint16_t &maxValue) {

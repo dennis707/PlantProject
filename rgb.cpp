@@ -19,25 +19,18 @@ void RGB::set_green()
     blue_led = 1;
 }
 
-//void RGB::set_yellow()
-//{
-//    red_led = 0;   // Yellow (Red + Green, inverted)
-//    green_led = 0;
-//    blue_led = 1;
-//}
+void RGB::set_blue()
+{
+    red_led = 1;   
+    green_led = 1;
+    blue_led = 0;
+}
 
 void RGB::turn_off_led()
 {
     red_led = 1;   
     green_led = 1;
     blue_led = 1;
-}
-
-void RGB::set_blue()
-{
-    red_led = 1;   
-    green_led = 1;
-    blue_led = 0;
 }
 
 void RGB::set_tempColor()
@@ -50,6 +43,20 @@ void RGB::set_tempColor()
 void RGB::set_humidColor()
 {
     red_led = 1;   
+    green_led = 0;
+    blue_led = 0;
+}
+
+void RGB::set_brightnessColor()
+{
+    red_led = 0;   // Yellow (Red + Green, inverted)
+    green_led = 0;
+    blue_led = 1;
+}
+
+void RGB::set_soilColor()
+{
+    red_led = 0;   
     green_led = 0;
     blue_led = 0;
 }

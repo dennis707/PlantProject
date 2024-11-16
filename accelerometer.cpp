@@ -6,7 +6,7 @@ Accelerometer::Accelerometer(I2C &i2c_instance) : i2c(i2c_instance)
 }
 
 void Accelerometer::initialize() {
-    uint8_t data[2] = {REG_CTRL_REG_1, 0x01};
+    uint8_t data[2] = {REG_CTRL_REG_1, 0x01};  // control register_! , 0x01 activate sensor
     writeRegs(data, 2);
 }
 

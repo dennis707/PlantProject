@@ -11,5 +11,7 @@ public:
     void set_tempColor();
     void set_humidColor();
     void turn_off_led();
+    void set_brightnessColor();
+    void set_soilColor();
 
 };
