@@ -95,20 +95,22 @@ void TemperatureSensor::check_limit()
 {
     if(temperature > upper_limit_temp || temperature < lower_limit_temp)
     {
-        rgb.set_tempColor();
+        rgb.set_tempColor();  // türkis
+        
     }
-    else 
-    {
-        rgb.turn_off_led();
-    }
+    //else 
+    //{
+    //    rgb.turn_off_led();
+    //}
 
     if(humidity > upper_limit_humid || humidity < lower_limit_humid)
     {
-        rgb.set_humidColor();
+        //rgb.set_humidColor(); // lila
+        rgb.set_tempColor();
     }
-    else 
-    {
-        rgb.turn_off_led();
-    }
+    //else 
+    //{
+    //    rgb.turn_off_led();
+    //}
     
 }

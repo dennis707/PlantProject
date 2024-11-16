@@ -11,7 +11,7 @@ private:
     float mean_value;      
     int measurement_count; 
 
-    float upper_limit = 100;
+    float upper_limit = 20;
     float lower_limit = 0;
 
 public:

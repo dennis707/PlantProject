@@ -50,9 +50,8 @@ void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSens
         brightness_val = brightness->measure_brightness();
         
         // Bodenfeuchtigkeit messen und ausgeben
-        float moisture = soilSensor->readMoisture();
-        soil = moisture;
-
+        soil = soilSensor->readMoisture();
+         
         if(testmode) {
             ThisThread::sleep_for(2s);  // Wartezeit zwischen den Messungen
         } else {   
@@ -130,7 +129,7 @@ void print_sensor_data() {
     }
 
     // Gemeinsame Ausgaben für beide Modi
-    printf("Brightness: %.2f\n", brightness_val);
+    printf("Brightness: %.2f%%\n", brightness_val);
     printf("Soil Moisture: %.2f%%\n", soil);
     printf("GPS: #Sats: %d Lat(UTC): %.6f %c Long(UTC): %.6f %c Altitude: %.1f %c GPT time: %s\n",
         gps.getNumSatellites(), gps.getLatitude(), gps.getParallel(), gps.getLongitude(), gps.getMeridian(), gps.getAltitude(), gps.getMeasurement(), gps.getGPSTime());
@@ -232,9 +231,7 @@ int main() {
                 print_sensor_data();
                 two_sek.reset();
             }
-            // Stoppe den Ticker und setze ihn auf 10 Sekunden
-            //mode_ticker.detach();  // Stoppe den Ticker
-           // mode_ticker.attach(&print_sensor_data, 10s); // Setze den Ticker auf 10 Sekunden
+            
         }
 
         // Aktionen für den Normalmodus

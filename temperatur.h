@@ -19,7 +19,7 @@ private:
     float mean_value_humid;      // Der Mittelwert der Helligkeit
     int measurement_count; // Zähler der Messungen (für Mittelwertberechnung)
 
-    float upper_limit_temp = 22;
+    float upper_limit_temp = 50;
     float lower_limit_temp = -10;
     float upper_limit_humid = 75;
     float lower_limit_humid = 25;
