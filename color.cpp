@@ -27,7 +27,7 @@ void ColorSensor::init() {
     ThisThread::sleep_for(3ms);
     writeRegister(TCS34725_ENABLE, TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN); // ADC aktivieren
     writeRegister(TCS34725_ATIME, 0xFF); // Maximale Integrationszeit
-    writeRegister(TCS34725_CONTROL, 0x00); // Gain auf 1x setzen
+    writeRegister(TCS34725_CONTROL, 0x02); // Gain auf 1x setzen 0x00 davor
 }
 
 // Funktion zum Lesen der Farbdaten

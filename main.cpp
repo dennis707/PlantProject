@@ -141,12 +141,6 @@ void print_sensor_data() {
 // Funktion, um den Modus zu wechseln
 void change_mode() {
     current_mode = (current_mode == TestMode) ? NormalMode : TestMode;
-     // Den Ticker auf das entsprechende Intervall setzen, je nach aktuellem Modus
-    //if (current_mode == TestMode) {
-    //    mode_ticker.attach(&print_sensor_data, 2s); // Alle 2 Sekunden im Testmodus
-    //} else {
-    //    mode_ticker.attach(&print_sensor_data, 10s); // Alle 10 Sekunden im Normalmodus
-    //}
 }
 
 int main() {
