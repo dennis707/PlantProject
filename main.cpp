@@ -23,7 +23,7 @@ I2C i2c(PB_7, PB_6);  // Dieselben I2C-Pins für alle Sensoren
 GPS gps(PA_9, PA_10, PA_12); // Beispiel-Pins, passe diese ggf. an deine Hardware an
 
 // Thread für GPS, Brightness und SoilSensor
-Thread sensor_thread(osPriorityNormal, 1024); // stacksize 1k
+Thread sensor_thread(osPriorityNormal, 1024); // stacksize 1kB
 
 // Neuer Thread für I2C-Sensoren
 Thread i2c_thread(osPriorityNormal, 1024);
@@ -32,6 +32,7 @@ Thread i2c_thread(osPriorityNormal, 1024);
 Ticker mode_ticker;
 
 // Gemeinsame Variablen für die Sensorwerte
+// Compiler darüber zu informieren, dass der Wert einer Variablen sich jederzeit ändern kann
 volatile uint16_t clear_val, red_val, green_val, blue_val;
 volatile float acc_x, acc_y, acc_z;
 volatile float temperature_val, humidity_val;

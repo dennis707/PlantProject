@@ -34,7 +34,7 @@ void GPS::parseData(char* nmea_sentence) {
                     snprintf(gps_time, sizeof(gps_time), "%.2s:%.2s:%.2s", token, token + 2, token + 4); // Zeitstempel
                     break;
                 case 2:
-                    latitude = atof(token) / 100;
+                    latitude = atof(token) / 100; //  String in einen Float 4916.45 für 49° 16.45'). Um diese in Dezimalgrad zu konvertieren, wird der Wert mit 100
                     break;
                 case 3:
                     parallel = token[0];
@@ -52,7 +52,8 @@ void GPS::parseData(char* nmea_sentence) {
                     altitude = atof(token);
                     break;
                 case 10:
-                    measurement = token[0] + 32;
+                    measurement = token[0] + 32; // A für gültig und V für ungültig 
+                    // 32 erhöht, was dem ASCII-Wert von a entspricht, falls A als Zeichen übergeben wird (dies bedeutet, dass der Wert von Großbuchstaben in Kleinbuchstaben geändert wird).
                     break;
             }
             token = strtok(NULL, ",");
