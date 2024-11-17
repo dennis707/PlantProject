@@ -41,4 +41,6 @@ public:
     float getMinValueY() const { return min_value_y; }
     float getMaxValueZ() const { return max_value_z; }
     float getMinValueZ() const { return min_value_z; }
+
+    uint8_t getRange();
 };

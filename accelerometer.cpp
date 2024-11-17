@@ -1,5 +1,6 @@
 #include "accelerometer.h"
 
+// resolution 14 bit
 Accelerometer::Accelerometer(I2C &i2c_instance) : i2c(i2c_instance) 
 {
     
@@ -17,7 +18,7 @@ uint8_t Accelerometer::getWhoAmI() {
 }
 
 float Accelerometer::getAccX() {
-    return static_cast<float>(getAccAxis(REG_OUT_X_MSB)) / 4096.0 * 9.81;
+    return static_cast<float>(getAccAxis(REG_OUT_X_MSB)) / 4096.0 * 9.81; // sensitity --> 2g mode
 }
 
 float Accelerometer::getAccY() {
@@ -82,4 +83,10 @@ void Accelerometer::update_values(float new_x, float new_y, float new_z)
     if (new_z < min_value_z) {
         min_value_z = new_z;
     }
+}
+
+uint8_t Accelerometer::getRange() {
+    uint8_t range = 0;
+    readRegs(0x0E, &range, 1);  // Register 0x0E lesen
+    return range & 0x03;        // Nur die Bits FS[1:0] extrahieren
 }

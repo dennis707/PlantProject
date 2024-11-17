@@ -27,6 +27,9 @@ private:
 
     void writeRegister(uint8_t reg, uint8_t value);
     uint16_t read16(uint8_t reg);
+
+
+    
 public:
     ColorSensor(I2C &i2c_instance, RGB& rgbInstance); // Konstruktor mit I2C-Referenz
     void init();

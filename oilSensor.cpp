@@ -45,7 +45,7 @@ void SoilSensor::check_limit()
 {
     if(sens_val > upper_limit || sens_val < lower_limit)
     {
-        rgb.set_brightnessColor();
+        rgb.set_soilColor(); // lila
     }
     //else 
     //{

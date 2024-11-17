@@ -40,9 +40,9 @@ void RGB::set_tempColor()
     blue_led = 0;
 }
 
-void RGB::set_humidColor()
+void RGB::set_rgbColor()
 {
-    red_led = 1;   
+    red_led = 0;   
     green_led = 0;
     blue_led = 0;
 }
@@ -56,7 +56,7 @@ void RGB::set_brightnessColor()
 
 void RGB::set_soilColor()
 {
-    red_led = 0;   
+    red_led = 1;   
     green_led = 0;
     blue_led = 0;
 }
