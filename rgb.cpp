@@ -40,7 +40,7 @@ void RGB::set_tempColor()
     blue_led = 0;
 }
 
-void RGB::set_rgbColor()
+void RGB::set_accelColor()
 {
     red_led = 0;   
     green_led = 0;

@@ -7,7 +7,7 @@ Accelerometer::Accelerometer(I2C &i2c_instance) : i2c(i2c_instance)
 }
 
 void Accelerometer::initialize() {
-    uint8_t data[2] = {REG_CTRL_REG_1, 0x01};  // control register_! , 0x01 activate sensor
+    uint8_t data[2] = {REG_CTRL_REG_1, 0x01};  // control register_1 , 0x01 activate sensor
     writeRegs(data, 2);
 }
 
@@ -54,7 +54,7 @@ int16_t Accelerometer::getAccAxis(uint8_t addr) {
     readRegs(addr, res, 2); // zwei Bytes aus den Registern des Sensors lesen
 
     acc = (res[0] << 6) | (res[1] >> 2); // um ein 14-Bit-Ergebnis (acc) zu erhalten.
-    if (acc > UINT14_MAX / 2) {
+    if (acc > UINT14_MAX / 2) { // if the first bit is positive it means negativ
         acc -= UINT14_MAX;
     }
     return acc;
@@ -103,7 +103,7 @@ void Accelerometer::check_limit() {
         valy > upper_limit_mps2 || valy < lower_limit_mps2 ||
         valz > upper_limit_mps2 || valz < lower_limit_mps2) {
         
-        printf("Test");
+        rgb.set_accelColor();
     } 
 }
 

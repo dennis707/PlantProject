@@ -22,8 +22,8 @@ private:
     RGB &rgb;
     DigitalOut ledPin; // Control the LED
     int redCount, greenCount, blueCount; // Color counters for last hour
-    EventQueue queue;
-    Ticker hourlyTicker;
+    //EventQueue queue;
+    //Ticker hourlyTicker;
 
     void writeRegister(uint8_t reg, uint8_t value);
     uint16_t read16(uint8_t reg);
