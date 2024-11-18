@@ -11,7 +11,8 @@ SoilSensor::SoilSensor(RGB &rgbinstance) : rgb(rgbinstance)
 
 // Liest die Bodenfeuchtigkeit und gibt sie in Prozent zurück
 float SoilSensor::readMoisture() {
-    sens_val = _sensorPin.read() * 100.0f;
+    soil_help = _sensorPin.read();
+    sens_val = soil_help * 100.0f;
     return sens_val;  // Wandelt die analoge Eingabe in Prozent um
 }
 
@@ -43,9 +44,9 @@ void SoilSensor::clear_values()
 
 void SoilSensor::check_limit()
 {
-    if(sens_val > upper_limit || sens_val < lower_limit)
+    if(soil_help > upper_limit || soil_help < lower_limit)
     {
-        rgb.set_soilColor(); // lila
+        rgb.set_soilColor(); // türkis
     }
     //else 
     //{

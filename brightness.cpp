@@ -11,8 +11,8 @@ float Brightness::measure_brightness()
 {
     //while (true) 
     //{
-        
-        brightness_val = brightness_sensor.read() * 100.0f;  // Read brightness (0.0 - 1.0)
+        bright =  brightness_sensor.read();
+        brightness_val = bright * 100.0f;  // Read brightness (0.0 - 1.0)
             
     //}
     return brightness_val;
@@ -46,7 +46,7 @@ void Brightness::clear_values()
 
 void Brightness::check_limit()
 {
-    if(brightness_val > upper_limit || brightness_val < lower_limit)
+    if(bright > upper_limit || bright < lower_limit)
     {
         rgb.set_brightnessColor(); // yellow
     }

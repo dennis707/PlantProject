@@ -5,13 +5,13 @@ class SoilSensor {
 private:
     RGB &rgb;
     float sens_val;
-
+    float soil_help;
     float max_value;       
     float min_value;       
     float mean_value;      
     int measurement_count; 
 
-    float upper_limit = 20;
+    float upper_limit = 1;
     float lower_limit = 0;
 
 public:

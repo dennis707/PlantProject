@@ -6,13 +6,14 @@ class Brightness
 private:
     RGB &rgb;
     float brightness_val; // 0-1
+    float bright;
 
     float max_value;       // Der höchste Helligkeitswert
     float min_value;       // Der niedrigste Helligkeitswert
     float mean_value;      // Der Mittelwert der Helligkeit
     int measurement_count; // Zähler der Messungen (für Mittelwertberechnung)
 
-    float upper_limit = 100;
+    float upper_limit = 1;
     float lower_limit = 0;
 public:
     Brightness(RGB &rgbinstance);

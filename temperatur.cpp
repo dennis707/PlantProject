@@ -98,7 +98,6 @@ void TemperatureSensor::check_limit()
     if(temperature > upper_limit_temp || temperature < lower_limit_temp)
     {
         rgb.set_tempColor();  // türkis
-        
     }
     //else 
     //{
@@ -107,7 +106,6 @@ void TemperatureSensor::check_limit()
 
     if(humidity > upper_limit_humid || humidity < lower_limit_humid)
     {
-        //rgb.set_humidColor(); // lila
         rgb.set_tempColor();
     }
     //else 

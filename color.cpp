@@ -43,6 +43,10 @@ void ColorSensor::readColorData(uint16_t &clear, uint16_t &red, uint16_t &green,
     red = read16(TCS34725_RDATAL);
     green = read16(TCS34725_GDATAL);
     blue = read16(TCS34725_BDATAL);
+    clear = clear;
+    red = red;
+    green = green;
+    blue = blue;
 }
 
 // Dominante Farbe ermitteln und den entsprechenden Zähler inkrementieren
@@ -107,4 +111,16 @@ int ColorSensor::get_max_counter()
         return blueCount;
     } 
     return 1;
+}
+
+void ColorSensor::check_limit()
+{
+    if ((clear > upper_limit || clear < lower_limit) ||
+    (red > upper_limit || red < lower_limit) ||
+    (green > upper_limit || green < lower_limit) ||
+    (blue > upper_limit || blue < lower_limit))
+    {
+        rgb.turn_off_led();
+    }
+
 }

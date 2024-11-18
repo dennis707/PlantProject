@@ -28,7 +28,9 @@ private:
     void writeRegister(uint8_t reg, uint8_t value);
     uint16_t read16(uint8_t reg);
 
-
+    int upper_limit = 65535;
+    int lower_limit = 0;
+    uint16_t clear, red, green, blue;
     
 public:
     ColorSensor(I2C &i2c_instance, RGB& rgbInstance); // Konstruktor mit I2C-Referenz
@@ -39,4 +41,6 @@ public:
 
     void getMaxColor(uint16_t red, uint16_t green, uint16_t blue, char &maxColor, uint16_t &maxValue);
     int get_max_counter();
+
+    void check_limit();
 };

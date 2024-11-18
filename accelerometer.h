@@ -24,6 +24,7 @@ private:
     float max_value_z;
     float min_value_z;
 
+    
 public:
     Accelerometer(I2C &i2c_instance); // Konstruktor mit I2C-Referenz
     void initialize();

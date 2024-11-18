@@ -6,7 +6,7 @@
 #include "oilSensor.h"
 #include "brightness.h"
 #include "rgb.h"
-
+Mutex mutex;
 RGB rgb;
 
 // Definition des Buttons
@@ -23,7 +23,7 @@ I2C i2c(PB_7, PB_6);  // Dieselben I2C-Pins für alle Sensoren
 GPS gps(PA_9, PA_10, PA_12); // Beispiel-Pins, passe diese ggf. an deine Hardware an
 
 // Thread für GPS, Brightness und SoilSensor
-Thread sensor_thread(osPriorityNormal, 1024); // stacksize 1kB
+Thread sensor_thread(osPriorityNormal, 1024); // stacksize 1kB // 1024
 
 // Neuer Thread für I2C-Sensoren
 Thread i2c_thread(osPriorityNormal, 1024);
@@ -61,7 +61,7 @@ void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSens
             brightness->update_values(brightness_val);  // Helligkeit
             brightness->check_limit();
             gps->convertToLocalTimeSpain();
-            ThisThread::sleep_for(10s);  // Wartezeit zwischen den Messungen
+            ThisThread::sleep_for(30s);  // Wartezeit zwischen den Messungen
         }
     }
 }
@@ -105,7 +105,7 @@ void i2cThreadFunction(ColorSensor* colorSensor, Accelerometer* accel, Temperatu
             tempSensor->update_values_humid(humidity_val);
             tempSensor->check_limit();
             accel->update_values(acc_x, acc_y, acc_z);
-            ThisThread::sleep_for(10s);  // Wartezeit zwischen den Messungen
+            ThisThread::sleep_for(30s);  // Wartezeit zwischen den Messungen
         }
     }
 }
@@ -221,7 +221,7 @@ int main() {
             led2 = 1;
             testmode = false;
             
-            if(two_sek.elapsed_time() >= 10s)
+            if(two_sek.elapsed_time() >= 30s)
             {
                 print_sensor_data();
                 two_sek.reset();
@@ -230,7 +230,7 @@ int main() {
         }
 
         // Aktionen für den Normalmodus
-        if (current_mode == NormalMode && hourly_timer.elapsed_time() >= 60s) {
+        if (current_mode == NormalMode && hourly_timer.elapsed_time() >= 1h) {
             // Stündliche Aktionen
             printf("Brightness - Max: %.2f, Min: %.2f, Mean: %.2f\n", brightness.get_max_value(), brightness.get_min_value(), brightness.get_mean_value());
             printf("Soil - Max: %.2f, Min: %.2f, Mean: %.2f\n", soilSensor.get_max_value(), soilSensor.get_min_value(), soilSensor.get_mean_value());
