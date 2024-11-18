@@ -6,7 +6,7 @@
 #include "oilSensor.h"
 #include "brightness.h"
 #include "rgb.h"
-Mutex mutex;
+
 RGB rgb;
 
 // Definition des Buttons
@@ -27,9 +27,6 @@ Thread sensor_thread(osPriorityNormal, 1024); // stacksize 1kB // 1024
 
 // Neuer Thread für I2C-Sensoren
 Thread i2c_thread(osPriorityNormal, 1024);
-
-// Ein Ticker für periodische Ausgaben
-Ticker mode_ticker;
 
 // Gemeinsame Variablen für die Sensorwerte
 // Compiler darüber zu informieren, dass der Wert einer Variablen sich jederzeit ändern kann
@@ -54,14 +51,14 @@ void sensorThreadFunction(GPS* gps, Brightness* brightness, SoilSensor* soilSens
         soil = soilSensor->readMoisture();
          
         if(testmode) {
-            ThisThread::sleep_for(2s);  // Wartezeit zwischen den Messungen
+            ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
         } else {   
             soilSensor->update_values(soil);  // Bodenfeuchtigkeit
             soilSensor->check_limit();
             brightness->update_values(brightness_val);  // Helligkeit
             brightness->check_limit();
             gps->convertToLocalTimeSpain();
-            ThisThread::sleep_for(30s);  // Wartezeit zwischen den Messungen
+            ThisThread::sleep_for(10s);  // Wartezeit zwischen den Messungen
         }
     }
 }
@@ -99,13 +96,13 @@ void i2cThreadFunction(ColorSensor* colorSensor, Accelerometer* accel, Temperatu
         humidity_val = tempSensor->readHumidity();
 
         if(testmode) {
-            ThisThread::sleep_for(2ms);  // Wartezeit zwischen den Messungen
+            ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
         } else {   
             tempSensor->update_values(temperature_val);  // Temperatur
             tempSensor->update_values_humid(humidity_val);
             tempSensor->check_limit();
             accel->update_values(acc_x, acc_y, acc_z);
-            ThisThread::sleep_for(30s);  // Wartezeit zwischen den Messungen
+            ThisThread::sleep_for(10s);  // Wartezeit zwischen den Messungen
         }
     }
 }
@@ -196,7 +193,7 @@ int main() {
             testmode = true;
             switch_test_to_normal = false;
 
-            if(two_sek.elapsed_time() >= 2s)
+            if(two_sek.elapsed_time() >= 2000ms)
             {
                 print_sensor_data();
                 two_sek.reset();
@@ -221,7 +218,7 @@ int main() {
             led2 = 1;
             testmode = false;
             
-            if(two_sek.elapsed_time() >= 30s)
+            if(two_sek.elapsed_time() >= 10s)
             {
                 print_sensor_data();
                 two_sek.reset();
@@ -230,7 +227,7 @@ int main() {
         }
 
         // Aktionen für den Normalmodus
-        if (current_mode == NormalMode && hourly_timer.elapsed_time() >= 1h) {
+        if (current_mode == NormalMode && hourly_timer.elapsed_time() >= 60s) {
             // Stündliche Aktionen
             printf("Brightness - Max: %.2f, Min: %.2f, Mean: %.2f\n", brightness.get_max_value(), brightness.get_min_value(), brightness.get_mean_value());
             printf("Soil - Max: %.2f, Min: %.2f, Mean: %.2f\n", soilSensor.get_max_value(), soilSensor.get_min_value(), soilSensor.get_mean_value());

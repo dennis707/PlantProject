@@ -19,15 +19,18 @@ uint8_t Accelerometer::getWhoAmI() {
 
 // Rohwert zB z.B. acc = 1234 // pro g eine digitale Zahl von 4096 [g] LSB also 1g = 4096 // 9,81 [m/s^2]
 float Accelerometer::getAccX() {
-    return static_cast<float>(getAccAxis(REG_OUT_X_MSB)) / 4096.0 * 9.81; // sensitity --> 2g mode
+    valx = static_cast<float>(getAccAxis(REG_OUT_X_MSB)) / 4096.0 * 9.81; // sensitity --> 2g mode  am ende [m/s^2]
+    return valx;
 }
 
 float Accelerometer::getAccY() {
-    return static_cast<float>(getAccAxis(REG_OUT_Y_MSB)) / 4096.0 * 9.81;
+    valy = static_cast<float>(getAccAxis(REG_OUT_Y_MSB)) / 4096.0 * 9.81;
+    return valy;
 }
 
 float Accelerometer::getAccZ() {
-    return static_cast<float>(getAccAxis(REG_OUT_Z_MSB)) / 4096.0 * 9.81;
+    valz = static_cast<float>(getAccAxis(REG_OUT_Z_MSB)) / 4096.0 * 9.81;
+    return valz;
 }
 
 
@@ -90,8 +93,23 @@ void Accelerometer::update_values(float new_x, float new_y, float new_z)
     }
 }
 
-uint8_t Accelerometer::getRange() {
-    uint8_t range = 0;
-    readRegs(0x0E, &range, 1);  // Register 0x0E lesen
-    return range & 0x03;        // Nur die Bits FS[1:0] extrahieren
+void Accelerometer::check_limit() {
+    // Convert limits to [m/s^2]
+    float upper_limit_mps2 = upper_limit * 9.81; // [m/s^2]
+    float lower_limit_mps2 = lower_limit * 9.81;
+
+    // Check if any axis exceeds the limits
+    if (valx > upper_limit_mps2 || valx < lower_limit_mps2 ||
+        valy > upper_limit_mps2 || valy < lower_limit_mps2 ||
+        valz > upper_limit_mps2 || valz < lower_limit_mps2) {
+        
+        printf("Test");
+    } 
 }
+
+
+//uint8_t Accelerometer::getRange() {
+//    uint8_t range = 0;
+//    readRegs(0x0E, &range, 1);  // Register 0x0E lesen
+//    return range & 0x03;        // Nur die Bits FS[1:0] extrahieren
+//}

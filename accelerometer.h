@@ -13,6 +13,7 @@ class Accelerometer {
 private:
     I2C &i2c; // Referenz auf die gemeinsame I2C-Instanz
 
+    float valx,valy,valz;
     void readRegs(int addr, uint8_t *data, int len);
     void writeRegs(uint8_t *data, int len);
     int16_t getAccAxis(uint8_t addr);
@@ -24,7 +25,8 @@ private:
     float max_value_z;
     float min_value_z;
 
-    
+    int upper_limit = 2;
+    int lower_limit = -2;
 public:
     Accelerometer(I2C &i2c_instance); // Konstruktor mit I2C-Referenz
     void initialize();
@@ -43,5 +45,6 @@ public:
     float getMaxValueZ() const { return max_value_z; }
     float getMinValueZ() const { return min_value_z; }
 
-    uint8_t getRange();
+    void check_limit();
+    //uint8_t getRange();
 };
