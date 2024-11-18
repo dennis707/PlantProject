@@ -1,5 +1,6 @@
 #include "mbed.h"
 #include <cstdint>
+#include "rgb.h"
 
 #define MMA8451_I2C_ADDRESS (0x1d << 1)
 #define REG_WHO_AM_I        0x0D
@@ -12,7 +13,7 @@
 class Accelerometer {
 private:
     I2C &i2c; // Referenz auf die gemeinsame I2C-Instanz
-
+    RGB &rgb;
     float valx,valy,valz;
     void readRegs(int addr, uint8_t *data, int len);
     void writeRegs(uint8_t *data, int len);
@@ -28,7 +29,7 @@ private:
     int upper_limit = 2;
     int lower_limit = -2;
 public:
-    Accelerometer(I2C &i2c_instance); // Konstruktor mit I2C-Referenz
+    Accelerometer(I2C &i2c_instance, RGB &rgbinstance); // Konstruktor mit I2C-Referenz
     void initialize();
     uint8_t getWhoAmI();
     float getAccX();

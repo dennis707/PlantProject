@@ -98,10 +98,12 @@ void i2cThreadFunction(ColorSensor* colorSensor, Accelerometer* accel, Temperatu
         if(testmode) {
             ThisThread::sleep_for(2000ms);  // Wartezeit zwischen den Messungen
         } else {   
+            colorSensor->check_limit();
             tempSensor->update_values(temperature_val);  // Temperatur
             tempSensor->update_values_humid(humidity_val);
             tempSensor->check_limit();
             accel->update_values(acc_x, acc_y, acc_z);
+            accel->check_limit();
             ThisThread::sleep_for(10s);  // Wartezeit zwischen den Messungen
         }
     }
@@ -150,7 +152,7 @@ int main() {
     colorSensor.init();
 
     // Beschleunigungssensor-Objekt erstellen und I2C-Instanz übergeben
-    Accelerometer accel(i2c);
+    Accelerometer accel(i2c, rgb);
     accel.initialize();
     printf("Accelerometer WhoAmI: %d\n", accel.getWhoAmI());
 

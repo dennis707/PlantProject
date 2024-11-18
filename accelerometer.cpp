@@ -1,7 +1,7 @@
 #include "accelerometer.h"
 
 // resolution 14 bit
-Accelerometer::Accelerometer(I2C &i2c_instance) : i2c(i2c_instance) 
+Accelerometer::Accelerometer(I2C &i2c_instance, RGB &rgbinstance) : i2c(i2c_instance), rgb(rgbinstance)
 {
     
 }
